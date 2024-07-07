@@ -1,6 +1,6 @@
 For the whose has an health or sport meter meter with the properties:
 * can be connected with a (micro) usb that exposes a disk containing a unique file.
-* the file is a concatenation of measurements, until the meter's memory is full (and has be be erase for the device).
+* the file is a concatenation of measurements, until the meter's memory is full (and has be be erase from the device).
 * the measurement binary files:
   * contains some data
   * contains records separated by a series of $ff (odd or even)
@@ -14,7 +14,10 @@ For the whose has an health or sport meter meter with the properties:
       * contains a data zone that can read as a raw file 8bits, signed, 2 channels
       * the data is between 0 and 100
   * terminates with a set of $ff
+
 This project is for him.
+
+
 
 
 The project reads one or more binary files to generate:
