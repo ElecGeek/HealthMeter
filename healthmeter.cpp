@@ -55,7 +55,7 @@ void send_bloc( ostream&theFile, basic_string_view<unsigned char> & bloc_sv, ASC
 				(*histo)<<= s;
 			  odd_even = !odd_even;
 			}
-		  cout << "\t" << *histo;
+		  cout << *histo;
 		  delete histo;
 		  if ( odd_even )
 			{
@@ -160,17 +160,16 @@ void Process_input_file(const string&inputFileName)
 				}
 			}
 		  else
-			cout << (unsigned short)header[ 0 ] << ":\t";
+			cout << setfill(' ') << setw(2) << (unsigned short)header[ 0 ] << ":  ";
 
 		  if ( the_date_time.Check_new_date_time( header.substr( 7, 6 )) )
-			cout << "(" << the_date_time << ')';
+			cout << "(" << the_date_time << ")  ";
 		  else
 			{
-			  cout << " " << the_date_time << ' ';
+			  cout << " " << the_date_time << "   ";
 			  the_date_time.Send_to_raw_file( outputFile );
 			}
 
-	  cout << "\t";
 	  if( outputFile.is_open() )
 		send_bloc( outputFile, slice_sv, the_date_time );
 	  else

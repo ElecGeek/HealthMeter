@@ -26,19 +26,21 @@ histogram&histogram::operator<<=( unsigned short val){
 };
 ostream&operator<<(ostream&os, const histogram&histo){
   // assume a sample rate of 1S
-  os << (histo.sample_rate * histo.counter ) / 60 << "min  ";
+  os << setfill(' ') << setw(2) << (histo.sample_rate * histo.counter ) / 60 << "min  ";
+  os.precision(1);
+  os.setf( ios_base::fixed, ios_base::floatfield );
   os << "moy:" << round((float)histo.moy_val/(float)histo.counter) / 10.0 <<"%  ";
   os << "min:" << ((float)histo.min_val)/10.0<<"%  ";
-  os << "max:" << ((float)histo.max_val)/10.0<<"%\t";
+  os << "max:" << ((float)histo.max_val)/10.0<<"%  ";
   float the_val;
   for_each( histo.the_histo.begin(), histo.the_histo.end(), [&](auto&iter)
 	{
 	  the_val = round( 1000.0 * (float)iter.second/(float)histo.counter ) / 10.0;
 	  os << "\t<" << ((float)iter.first)/10.0 << "%:";
 	  if ( the_val != 0.0 )
-		os << the_val << "%";
+		os << setfill(' ') << setw(4) << the_val << "%";
 	  else
-		os << "none";
+		os << " /   ";
     } );
   return os;
 }

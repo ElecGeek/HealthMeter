@@ -66,7 +66,9 @@ void ASCII_date_time::Send_to_raw_file(ostream&theFile)const
 ostream&operator<<(ostream&os,const ASCII_date_time&a)
 {
   os << (unsigned short)a.year<< '/' << (unsigned short)a.month << '/' << (unsigned short)a.day << ' ';
-  os<< (unsigned short)a.hour << ':' << (unsigned short)a.minute << ':' << (unsigned short)a.second;
+  os << setfill(' ') << setw(2) << (unsigned short)a.hour << ':';
+  os << setfill('0') << setw(2) << (unsigned short)a.minute << ':';
+  os << setfill('0') << setw(2) << (unsigned short)a.second;
   return os;
 }
 
