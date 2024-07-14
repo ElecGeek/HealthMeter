@@ -134,41 +134,41 @@ void Process_input_file(const string_view&inputFileName)
 	  if ( debug_extra_data )
 		cout << begin_pos << "-" << end_pos << "=" << end_pos - begin_pos  << "\t";
 
-		  if ( 1 == 2 )
+	  if ( 1 == 2 )
+		{
+		  unsigned short pos_count = 0;
+		  for( auto&& s : header )
 			{
-			  unsigned short pos_count = 0;
-			  for( auto&& s : header )
+			  cout << (unsigned short)s;
+			  switch ( pos_count )
 				{
-				  cout << (unsigned short)s;
-				  switch ( pos_count )
-					{
-					case 8:
-					  cout << '/';
-					  break;
-					case 10:
-					case 11:
-					  cout << ':';
-					  break;
-					case 13:
-					  cout << " S";
-					  break;
-					default:
-					  cout<< ' ';
-					  break;
-					}
-				  pos_count ++;
+				case 8:
+				  cout << '/';
+				  break;
+				case 10:
+				case 11:
+				  cout << ':';
+				  break;
+				case 13:
+				  cout << " S";
+				  break;
+				default:
+				  cout<< ' ';
+				  break;
 				}
+			  pos_count ++;
 			}
-		  else
-			cout << setfill(' ') << setw(2) << (unsigned short)header[ 0 ] << ":  ";
-
-		  if ( the_date_time.Check_new_date_time( header.substr( 7, 6 )) )
-			cout << "(" << the_date_time << ")  ";
-		  else
-			{
-			  cout << " " << the_date_time << "   ";
-			  the_date_time.Send_to_raw_file( outputFile );
-			}
+		}
+	  else
+		cout << setfill(' ') << setw(2) << (unsigned short)header[ 0 ] << ":  ";
+	  
+	  if ( the_date_time.Check_new_date_time( header.substr( 7, 6 )) )
+		cout << "(" << the_date_time << ")  ";
+	  else
+		{
+		  cout << " " << the_date_time << "   ";
+		  the_date_time.Send_to_raw_file( outputFile );
+		}
 
 	  if( outputFile.is_open() )
 		send_bloc( outputFile, slice_sv, the_date_time );
