@@ -29,5 +29,9 @@ public:
   // For all cases, the date provided overwrites the recorded date
   bool Check_new_date_time( const basic_string_view<unsigned char>& );
   void Send_to_raw_file(ostream&)const;
+  constexpr string_view GetTitles()const
+  {
+	return string_view("  date     time    ");
+  }
   friend ostream&operator<<(ostream&os,const ASCII_date_time&);
 };

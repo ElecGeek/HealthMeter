@@ -7,9 +7,22 @@
 #include <math.h>
 using namespace std;
 
-class histogram {
+class histogram_info {
   const vector<unsigned short> histo_vals{ 90, 85, 80, 75 };
   const vector<unsigned short> extra_histo{ 95, 101 };
+  string titles;
+public:
+  histogram_info()=delete;
+  histogram_info(const bool&extra_thresholds);
+  vector<unsigned short> concaten_histo;
+  string_view GetTitles()const
+  {
+	return string_view(titles);
+  }
+  friend class histogram;
+};
+
+class histogram {
   deque< pair< unsigned short, unsigned long > >the_histo;
   unsigned long counter;
   unsigned long min_val;
@@ -17,9 +30,10 @@ class histogram {
   unsigned long moy_val;
   unsigned char sample_rate;
   bool extra_thresholds;
+  const histogram_info&histo_info;
 public:
   histogram()=delete;
-  histogram(const char&,const bool&extra_thresholds);
+  histogram(const char&,const histogram_info&histo_info);
   histogram&operator<<=( unsigned short);
   friend ostream&operator<<(ostream&, const histogram&);
 };

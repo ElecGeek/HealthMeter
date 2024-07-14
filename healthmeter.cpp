@@ -16,7 +16,7 @@ using namespace std;
 
 bool debug_extra_data;
 bool debug_extra_thresholds;
-void send_bloc( ostream&theFile, basic_string_view<unsigned char> & bloc_sv, ASCII_date_time &the_date_time )
+void send_bloc( ostream&theFile, basic_string_view<unsigned char> & bloc_sv, ASCII_date_time &the_date_time, const histogram_info&histo_info )
 {
   //  cout << hex << (unsigned short)bloc_sv[0] << "\t" << hex << bloc_sv.length() << endl;
   if ( 1==2 )
@@ -39,7 +39,7 @@ void send_bloc( ostream&theFile, basic_string_view<unsigned char> & bloc_sv, ASC
 		  char cnv_val_8;
 		  histogram*histo;
 		  // Pass the sampling rate to convert the samples number to minutes
-		  histo = new histogram(header[14],debug_extra_thresholds);
+		  histo = new histogram(header[14], histo_info);
 		  for( auto&& s : body )
 			{
 			  cnv_val_s = (unsigned short)s;
@@ -83,6 +83,7 @@ void Process_input_file(const string_view&inputFileName)
   str_buff.assign(( istreambuf_iterator<char>(inputFile)),istreambuf_iterator<char>());
   basic_string_view<unsigned char> sv_buff( str_buff );
   decltype( str_buff )::size_type begin_pos,end_pos= str_buff.find( separ_str );
+  histogram_info histo_info(debug_extra_thresholds);
   for(;;)
 	{
 	  // run to the end of the separator
@@ -115,8 +116,10 @@ void Process_input_file(const string_view&inputFileName)
 
 	  // The file-name takes the time-stamp of the first record
 	  // then the output file can be opened only here
+	  // and not before the main records loop
 	  if( ! outputFile.is_open() )
 		{
+		  // Create the name
 		  string filename;
 		  filename.reserve( 30 );
 		  filename = "Healthmeter_";
@@ -128,8 +131,15 @@ void Process_input_file(const string_view&inputFileName)
 		  filename += "_";
 		  filename += to_string( header[ 11 ]);
 		  filename += ".RAW";
+		  // Open the file
 		  outputFile.open(filename.c_str(),ios::binary|ios::out);
 		  cout << "\tOutput file: " << filename << endl;
+		  // Assume it is opened, TODO handle the errors
+		  // Now send the titles of the columns
+		  cout << " N    ";
+		  cout << the_date_time.GetTitles();
+		  cout << histo_info.GetTitles();
+		  cout << endl;
 		}
 	  if ( debug_extra_data )
 		cout << begin_pos << "-" << end_pos << "=" << end_pos - begin_pos  << "\t";
@@ -171,7 +181,7 @@ void Process_input_file(const string_view&inputFileName)
 		}
 
 	  if( outputFile.is_open() )
-		send_bloc( outputFile, slice_sv, the_date_time );
+		send_bloc( outputFile, slice_sv, the_date_time, histo_info );
 	  else
 		cout<< "***** Some data is lost, as the output file is not opened *****" << endl;
 	}
