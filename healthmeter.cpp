@@ -66,7 +66,7 @@ void send_bloc( ostream&theFile, basic_string_view<unsigned char> & bloc_sv, ASC
   cout << endl;
 }
 
-void Process_input_file(const string&inputFileName)
+void Process_input_file(const string_view&inputFileName)
 {
   // in the meantime of C++20
   const basic_string<unsigned char> separ_str=(unsigned char*)"\xff\xff"; 
@@ -74,7 +74,7 @@ void Process_input_file(const string&inputFileName)
   ofstream outputFile;
   ifstream inputFile;
   cout << "Input file: " << inputFileName;
-  inputFile.open(inputFileName,ios::binary|ios::in);
+  inputFile.open(string(inputFileName),ios::binary|ios::in);
   ASCII_date_time the_date_time;
   // in the meantime of C++20
   basic_string<unsigned char> str_buff;
@@ -185,10 +185,28 @@ void Process_input_file(const string&inputFileName)
 }
 
 
-int main()
+int main(int argc,char*argv[])
 {
   debug_extra_data = false;
   debug_extra_thresholds = true;
 
-  Process_input_file(DEFAULTINPUTFILE);
+  const vector<string_view>args(argv+1,argv+argc);
+
+  unsigned int filenames_count = 0;
+  for( string_view param : args )
+	{
+	  // It is assumed, there are no argument to any option,
+	  //   or there is no space between the option and the argument
+	  if ( param.substr( 0, 1 ) == string( "-" )) 
+		cout << " Processing arg: " << param.substr( 1 ) << " TODO" << endl;
+	  else
+		{
+		  Process_input_file( param );
+		  filenames_count += 1;
+		}
+	}
+  if ( filenames_count == 0 )
+	{
+	  Process_input_file(string_view(DEFAULTINPUTFILE) );
+	}
 }
