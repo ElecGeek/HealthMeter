@@ -4,7 +4,8 @@
 
 ASCII_date_time::ASCII_date_time():
   month( 0 ), day( 0 ),
-  hour( 0 ), minute( 0 ), second( 0 )
+  hour( 0 ), minute( 0 ), second( 0 ),
+  isNewDateTime( true )
 {}
 
 void ASCII_date_time::Set_new_date_time( const basic_string_view<unsigned char>&a )
@@ -23,34 +24,32 @@ bool ASCII_date_time::Check_new_date_time( const basic_string_view<unsigned char
   // the result is wrong, means there is a separator where it shouldn't, only in the night of the new year
   if ( a[ 5 ] != second || a[ 4 ] != minute )
 	{
-	  Set_new_date_time( a );
-	  return false;
-	}
-  if ( a[ 3 ] != 0 )
-	{
-	  // Still the same day
-	  if ( a[ 3 ] == ( hour + 1 ) && a[ 2 ] == day  && a[ 1 ] == month )
-		{
-		  Set_new_date_time( a );
-		  return true;
-		}else{
-		Set_new_date_time( a );
-		return false;
-	  }
+	  isNewDateTime = true;
 	}else{
-	if( hour == 23 && (
-					   ( a[ 2 ] == ( day + 1 ) && a[ 1 ] == month ) ||
-					   ( a[ 2 ] == 1 && a[ 1 ] == ( month + 1 ))
-					   // Assume, we don't make any measurement the night 
-					   ))
+	if ( a[ 3 ] != 0 )
 	  {
-		Set_new_date_time( a );
-		return true;
+		// Still the same day
+		if ( a[ 3 ] == ( hour + 1 ) && a[ 2 ] == day  && a[ 1 ] == month )
+		  {
+			isNewDateTime = false;
+		  }else{
+		  isNewDateTime = true;
+		}
 	  }else{
-	  Set_new_date_time( a );
-	  return false;
+	  if( hour == 23 && (
+						 ( a[ 2 ] == ( day + 1 ) && a[ 1 ] == month ) ||
+						 ( a[ 2 ] == 1 && a[ 1 ] == ( month + 1 ))
+						 // Assume, we don't make any measurement the night 
+						 ))
+		{
+		  isNewDateTime = false;
+		}else{
+		isNewDateTime = true;
+	  }
 	}
   }
+  Set_new_date_time( a );
+  return isNewDateTime;
 }
 void ASCII_date_time::Send_to_raw_file(ostream&theFile)const
 {
@@ -65,9 +64,13 @@ void ASCII_date_time::Send_to_raw_file(ostream&theFile)const
 }
 ostream&operator<<(ostream&os,const ASCII_date_time&a)
 {
-  os << (unsigned short)a.year<< '/';
-  os << setfill('0') << setw(2) << (unsigned short)a.month << '/';
-  os << setfill('0') << setw(2) << (unsigned short)a.day << ' ';
+  if ( a.isNewDateTime )
+	{ 
+	  os << (unsigned short)a.year<< '/';
+	  os << setfill('0') << setw(2) << (unsigned short)a.month << '/';
+	  os << setfill('0') << setw(2) << (unsigned short)a.day << ' ';
+	}else
+	os << "         ";
 
   os << setfill(' ') << setw(2) << (unsigned short)a.hour << ':';
   os << setfill('0') << setw(2) << (unsigned short)a.minute << ':';

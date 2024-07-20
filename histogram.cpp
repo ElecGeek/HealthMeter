@@ -12,7 +12,7 @@ histogram_info::histogram_info(const bool&extra_thresholds)
 	  copy( histo_vals.begin(),histo_vals.end(),back_inserter(concaten_histo));	
   }
   titles.reserve( 30 + 7 * concaten_histo.size());
-  titles += " dur.   moy    min    max    ";
+  titles += " dur.   moy    min    max ";
   stringstream strstm;
   strstm.precision(1);
   strstm.setf( ios_base::fixed, ios_base::floatfield );
@@ -56,7 +56,7 @@ ostream&operator<<(ostream&os, const histogram&histo){
   os.setf( ios_base::fixed, ios_base::floatfield );
   os << round((float)histo.moy_val/(float)histo.counter) / 10.0 <<"%  ";
   os << ((float)histo.min_val)/10.0<<"%  ";
-  os << ((float)histo.max_val)/10.0<<"%  ";
+  os << ((float)histo.max_val)/10.0<<"%";
   float the_val;
   for_each( histo.the_histo.begin(), histo.the_histo.end(), [&](auto&iter)
 	{

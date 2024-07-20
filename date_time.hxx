@@ -19,6 +19,8 @@ class ASCII_date_time {
   unsigned char hour;
   unsigned char minute;
   unsigned char second;
+  // The result of CHeck_new_date_time is saved into this variable as well
+  bool isNewDateTime;
   void Set_new_date_time( const basic_string_view<unsigned char>& );
   void send_digit( ostream&theFile, const unsigned char&digit )const;
 public:
@@ -31,7 +33,7 @@ public:
   void Send_to_raw_file(ostream&)const;
   constexpr string_view GetTitles()const
   {
-	return string_view("  date     time    ");
+	return string_view("  date     time   ");
   }
   friend ostream&operator<<(ostream&os,const ASCII_date_time&);
 };

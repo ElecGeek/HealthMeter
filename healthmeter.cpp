@@ -173,13 +173,10 @@ void Process_input_file(const string_view&inputFileName)
 		cout << setfill(' ') << setw(2) << (unsigned short)header[ 0 ] << ":  ";
 	  
 	  if ( the_date_time.Check_new_date_time( header.substr( 7, 6 )) )
-		cout << "(" << the_date_time << ")  ";
-	  else
-		{
-		  cout << " " << the_date_time << "   ";
-		  the_date_time.Send_to_raw_file( outputFile );
-		}
-
+		the_date_time.Send_to_raw_file( outputFile );
+	  
+	  cout << the_date_time << "  ";
+	  
 	  if( outputFile.is_open() )
 		send_bloc( outputFile, slice_sv, the_date_time, histo_info );
 	  else
@@ -198,7 +195,7 @@ void Process_input_file(const string_view&inputFileName)
 int main(int argc,char*argv[])
 {
   debug_extra_data = false;
-  debug_extra_thresholds = true;
+  debug_extra_thresholds = false;
 
   const vector<string_view>args(argv+1,argv+argc);
 

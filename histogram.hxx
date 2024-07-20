@@ -8,7 +8,7 @@
 using namespace std;
 
 class histogram_info {
-  const vector<unsigned short> histo_vals{ 90, 85, 80, 75 };
+  const vector<unsigned short> histo_vals{ 90, 87, 85, 80, 75 };
   const vector<unsigned short> extra_histo{ 95, 101 };
   string titles;
 public:

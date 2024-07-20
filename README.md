@@ -42,7 +42,7 @@ The project reads one or more binary files to generate:
   * the data converted from 0 to 100% into 0 to 127. By this way, the editing software shows 100% for a 100% measure.
 
 An additional feature applies if a record follows the previous one exactly one hour later:
-* the statistics display the time-stamp into brackets.
+* the statistics display the time only, not the date.
 * the record limit, in the raw file, are omitted.
 
 All thee interfaces with the machine are done via the C++11 features. The project should compile my a simple "make" invocation.
@@ -53,7 +53,5 @@ By editing and recompiling, some modifications can be done to change, for instan
 TODO: make some debug activation more optional than hard-coded
 
 TODO: write the workflows to compile for many plateforms
-
-TODO: read the arguments to load multiples input files
 
 TODO or never: handle properly the new and fix the bug that does not merge the records in the new year night
