@@ -10,16 +10,16 @@ EXECDIR?=
 
 
 $(EXECDIR)healthmeter	:	$(BUILDDIR)healthmeter.o $(BUILDDIR)histogram.o $(BUILDDIR)date_time.o
-	g++ -o $(EXECDIR)healthmeter $(BUILDDIR)healthmeter.o $(BUILDDIR)histogram.o $(BUILDDIR)date_time.o
+	$(CXX) $(LDFLAGS) -o $(EXECDIR)healthmeter $(BUILDDIR)healthmeter.o $(BUILDDIR)histogram.o $(BUILDDIR)date_time.o
 
 $(BUILDDIR)healthmeter.o	: $(SRCDIR)healthmeter.cpp $(SRCDIR)date_time.hxx $(SRCDIR)histogram.hxx
-	g++ -c -o $(BUILDDIR)healthmeter.o -std=c++17 -D DEFAULTINPUTFILE=$(DEFAULTINPUTFILENAME) $(SRCDIR)healthmeter.cpp
+	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)healthmeter.o -std=c++17 -D DEFAULTINPUTFILE=$(DEFAULTINPUTFILENAME) $(SRCDIR)healthmeter.cpp
 
 $(BUILDDIR)date_time.o	: $(SRCDIR)date_time.cpp $(SRCDIR)date_time.hxx
-	g++ -c -o $(BUILDDIR)date_time.o -std=c++17 $(SRCDIR)date_time.cpp
+	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)date_time.o -std=c++17 $(SRCDIR)date_time.cpp
 
 $(BUILDDIR)histogram.o	: $(SRCDIR)histogram.cpp $(SRCDIR)histogram.hxx
-	g++ -c -o $(BUILDDIR)histogram.o -std=c++17 $(SRCDIR)histogram.cpp
+	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)histogram.o -std=c++17 $(SRCDIR)histogram.cpp
 
 
 clean	:
