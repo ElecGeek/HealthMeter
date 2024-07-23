@@ -50,8 +50,6 @@ The Makefile supports the SOURCEDIR, BUILDDIR, DESTDIR, CXX, CXXFLAGS and LDFLAG
 
 By editing and recompiling, some modifications can be done to change, for instance, the thresholds.
 
-TODO: make some debug activation more optional than hard-coded
-
-TODO: write the workflows to compile for many plateforms
+TODO: write the workflows to compile for MacOS-X plateform
 
 TODO or never: handle properly the new and fix the bug that does not merge the records in the new year night

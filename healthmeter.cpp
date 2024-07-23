@@ -5,7 +5,9 @@
 #include <string_view>
 #include <vector>
 #include <deque>
+#include <map>
 #include <algorithm>
+#include <functional>
 #include <limits>
 #include <math.h>
 using namespace std;
@@ -14,8 +16,6 @@ using namespace std;
 #include "histogram.hxx"
 
 
-bool debug_extra_data;
-bool debug_extra_thresholds;
 void send_bloc( ostream&theFile, basic_string_view<unsigned char> & bloc_sv, ASCII_date_time &the_date_time, const histogram_info&histo_info )
 {
   //  cout << hex << (unsigned short)bloc_sv[0] << "\t" << hex << bloc_sv.length() << endl;
@@ -66,7 +66,8 @@ void send_bloc( ostream&theFile, basic_string_view<unsigned char> & bloc_sv, ASC
   cout << endl;
 }
 
-void Process_input_file(const string_view&inputFileName)
+void Process_input_file(const string_view&inputFileName,
+						const bool&debug_extra_data,const bool&debug_extra_thresholds)
 {
   // in the meantime of C++20
   const basic_string<unsigned char> separ_str=(unsigned char*)"\xff\xff"; 
@@ -194,26 +195,44 @@ void Process_input_file(const string_view&inputFileName)
 
 int main(int argc,char*argv[])
 {
-  debug_extra_data = false;
-  debug_extra_thresholds = false;
+
+  bool debug_extra_data = false;
+  bool debug_extra_thresholds = false;
+  bool display_help = false;
+
+  const map< string_view, function< void()> > options_list = {
+	{ "-d",[&](){ debug_extra_data = true; } },
+	{ "-t",[&](){ debug_extra_thresholds = true; } },
+	{ "-h",[&](){ display_help = true; } },
+	{ "--help",[&](){ display_help = true; } }
+  };
 
   const vector<string_view>args(argv+1,argv+argc);
 
-  unsigned int filenames_count = 0;
+  deque< string_view > files_list;
   for( string_view param : args )
 	{
 	  // It is assumed, there are no argument to any option,
 	  //   or there is no space between the option and the argument
-	  if ( param.substr( 0, 1 ) == string( "-" )) 
-		cout << " Processing arg: " << param.substr( 1 ) << " TODO" << endl;
-	  else
+	  if ( param.substr( 0, 1 ) == string( "-" ))
 		{
-		  Process_input_file( param );
-		  filenames_count += 1;
-		}
+		  decltype(options_list)::const_iterator option_found = options_list.find( param );
+		  if ( option_found != options_list.end() )
+			option_found->second();
+		  else
+			cout << " Unknown option: " << param << ", use -h or --help to get the documentation" << endl;
+		} else
+		  files_list.push_back( param );
 	}
-  if ( filenames_count == 0 )
+
+  if ( files_list.empty() )
+	  files_list.push_back(string_view(DEFAULTINPUTFILE) );
+
+
+  if ( display_help )
 	{
-	  Process_input_file(string_view(DEFAULTINPUTFILE) );
-	}
+	  cout << "HELP, there is no help. It is going to come later" << endl;
+	}else
+	for( string_view theFile : files_list )
+	  Process_input_file( theFile, debug_extra_data, debug_extra_thresholds );
 }
