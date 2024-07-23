@@ -1,13 +1,13 @@
 For the whose has an health or sport meter meter with the properties:
-* can be connected with a (micro) usb that exposes a disk containing a unique file.
-* the file is a concatenation of measurements, until the meter's memory is full (and has be be erase from the device).
+* can be connected with a (micro) usb that exposes a disk containing a data file.
+* the file is a concatenation of measurements, until the meter's memory is full (and has to be erased from the device).
 * the measurement binary files:
   * contains some data
   * contains records separated by a series of $ff (odd or even)
     * contain a header
     * record number
     * some data
-    * the date and time as plain ASCII characters
+    * the date and time as plain char numbers (only from 0 to 12, 23, 31 or 59 are used)
     * some data
     * the sampling rate as the time, in seconds, between two samples.
     * some data
@@ -20,7 +20,11 @@ This project is for him.
 
 
 
-The project reads one or more binary files to generate:
+The project process:
+* the parsing of the arguments to get the files names
+  * if no file-name is provided at all, the default one is used
+  * if at least one is provided, it or they are processed
+* the reading of these binary files in the same order
 * some statistics sent to the standard output.
   * the record number
   * some data in debug mode only
@@ -29,8 +33,8 @@ The project reads one or more binary files to generate:
   * the record length in minutes
   * the min, max and average
   * many percent of the time the value is under a certain threshold
-* a raw file name base on the first record time-stamp.
-* a raw file intended to be open by most of the music editing software.
+* a file-name based on the first record time-stamp for each input file.
+* a raw file, of that file-name, intended to be open by most of the music editing software.
   * a record limit containing the time-stamp in the 2 channels. It has been design to not be confused with the record themselves
     * 100% sample
     * date
@@ -48,8 +52,11 @@ An additional feature applies if a record follows the previous one exactly one h
 All thee interfaces with the machine are done via the C++11 features. The project should compile my a simple "make" invocation.
 The Makefile supports the SOURCEDIR, BUILDDIR, DESTDIR, CXX, CXXFLAGS and LDFLAGS. 
 
-By editing and recompiling, some modifications can be done to change, for instance, the thresholds.
 
-TODO: write the workflows to compile for MacOS-X plateform
 
-TODO or never: handle properly the new and fix the bug that does not merge the records in the new year night
+It compiles on Ubuntu, Windows and MacOS-X
+There is a work-flow to build standard versions. For specific versions, such as default names, one has to build himself.
+
+
+
+TODO or never: handle properly the new year and fix the bug that does not merge the records in the new year night
