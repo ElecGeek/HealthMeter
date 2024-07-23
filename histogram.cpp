@@ -32,7 +32,6 @@ histogram::histogram(const char&sample_rate, const histogram_info&histo_info):
   counter(0),
   min_val( numeric_limits< decltype( min_val )>::max()),moy_val(0),max_val(0),
   sample_rate(sample_rate),
-  extra_thresholds(extra_thresholds),
   histo_info(histo_info) {
   for( unsigned short val : histo_info.concaten_histo )
 	the_histo.push_back( make_pair( 10 * val, 0 ));

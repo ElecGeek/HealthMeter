@@ -29,7 +29,6 @@ class histogram {
   unsigned long max_val;
   unsigned long moy_val;
   unsigned char sample_rate;
-  bool extra_thresholds;
   const histogram_info&histo_info;
 public:
   histogram()=delete;
