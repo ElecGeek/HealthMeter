@@ -44,11 +44,12 @@ jobs:
           mkdir build/MacOS
       - name: build
         run: |
-          #make BUILDDIR=build/MacOS/ EXECDIR=build/MacOS/
+          make BUILDDIR=build/MacOS/ EXECDIR=build/MacOS/
       - name: make things easy for the non devs
         run: |
           cd build/MacOS
-          #tar -cf The_objects_files.tar *.o  --remove-files
+          tar -cf The_objects_files.tar *.o
+          rm -f *.o
       - name: return workflow as artifacts
         uses: actions/upload-artifact@v4
         with:
