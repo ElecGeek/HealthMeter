@@ -15,11 +15,13 @@ using namespace std;
 #include "date_time.hxx"
 #include "histogram.hxx"
 
-
+// Processes one record
+// The data is normalised for audio editing software
+// The histogram is processed and sent to the standard output
 void send_bloc( ostream&theFile, basic_string_view<unsigned char> & bloc_sv, ASCII_date_time &the_date_time, const histogram_info&histo_info )
 {
   //  cout << hex << (unsigned short)bloc_sv[0] << "\t" << hex << bloc_sv.length() << endl;
-  if ( 1==2 )
+  /*  if ( 1==2 )
 	{
 	  if ( bloc_sv.length() > 50 )
 		{
@@ -27,12 +29,12 @@ void send_bloc( ostream&theFile, basic_string_view<unsigned char> & bloc_sv, ASC
 		  for( auto&& s : body )
 			cout << (unsigned short)s << ' ';
 		}
-	}else{
+		}else{*/
 	  if ( bloc_sv.length() > 28 )
 		{
 		  basic_string_view<unsigned char> header = bloc_sv.substr( 0, 28 );
 		 
-		  // There is not different treatment between the two channels
+		  // There is no different treatment between the two channels
 		  basic_string_view<unsigned char> body = bloc_sv.substr( 28, basic_string_view<unsigned char>::npos );
 		  bool odd_even = false;
 		  unsigned short cnv_val_s;
@@ -62,17 +64,16 @@ void send_bloc( ostream&theFile, basic_string_view<unsigned char> & bloc_sv, ASC
 			  cout << "This, normally should not happened, one padding 0 is added" << endl;
 			}
 		}
-  }
+	  /*}*/
   cout << endl;
 }
 
 void Process_input_file(const string_view&inputFileName,
 						const bool&debug_extra_data,const bool&debug_extra_thresholds)
 {
-  // in the meantime of C++20
-  const basic_string<unsigned char> separ_str=(unsigned char*)"\xff\xff"; 
-  const basic_string<unsigned char> separ_str_1=separ_str.substr( 0, 1 );
   ofstream outputFile;
+  // Open the input file and place the entire content into a string
+  // It is assumed the size is never greater than a mega
   ifstream inputFile;
   cout << "Input file: " << inputFileName;
   inputFile.open(string(inputFileName),ios::binary|ios::in);
@@ -83,11 +84,19 @@ void Process_input_file(const string_view&inputFileName,
   str_buff.reserve( length );
   str_buff.assign(( istreambuf_iterator<char>(inputFile)),istreambuf_iterator<char>());
   basic_string_view<unsigned char> sv_buff( str_buff );
+  // Declare the "pointers"
+  // in the meantime of C++20
+  const basic_string<unsigned char> separ_str=(unsigned char*)"\xff\xff"; 
+  const basic_string<unsigned char> separ_str_1=separ_str.substr( 0, 1 );
   decltype( str_buff )::size_type begin_pos,end_pos= str_buff.find( separ_str );
   histogram_info histo_info(debug_extra_thresholds);
   for(;;)
 	{
-	  // run to the end of the separator
+	  // Search for a bloc between 2 separators ($ff)
+	  // The number of bytes should be even,
+	  //   the number of $ff is odd or even
+	  //
+	  // Run to the end of the separator
 	  // We resume from the last end position
 	  begin_pos = end_pos;
 	  while( begin_pos != decltype( str_buff )::npos )
@@ -107,6 +116,7 @@ void Process_input_file(const string_view&inputFileName,
 	  // search for the next separator
 	  // To go in the (next) separator, we need some unsigned chars equal to $ff
 	  end_pos = str_buff.find( separ_str, begin_pos + separ_str.length());
+	  // If the end of the string/file is reached, break the for(;;) loop
 	  if( end_pos == decltype( str_buff )::npos )
 		break;
 
@@ -145,7 +155,7 @@ void Process_input_file(const string_view&inputFileName,
 	  if ( debug_extra_data )
 		cout << begin_pos << "-" << end_pos << "=" << end_pos - begin_pos  << "\t";
 
-	  if ( 1 == 2 )
+	  /*	  if ( 1 == 2 )
 		{
 		  unsigned short pos_count = 0;
 		  for( auto&& s : header )
@@ -170,7 +180,7 @@ void Process_input_file(const string_view&inputFileName,
 			  pos_count ++;
 			}
 		}
-	  else
+		else*/
 		cout << setfill(' ') << setw(2) << (unsigned short)header[ 0 ] << ":  ";
 	  
 	  if ( the_date_time.Check_new_date_time( header.substr( 7, 6 )) )

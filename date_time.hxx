@@ -3,23 +3,17 @@
 #include <array>
 #include <string>
 #include <string_view>
-//#include <vector>
-//#include <deque>
-//#include <algorithm>
-//#include <limits>
-//#include <math.h>
 using namespace std;
 
 
 class ASCII_date_time {
-  // year is voided as the format is unclear
   unsigned char year;
   unsigned char month;
   unsigned char day;
   unsigned char hour;
   unsigned char minute;
   unsigned char second;
-  // The result of CHeck_new_date_time is saved into this variable as well
+  // The result of Check_new_date_time is saved into this variable as well
   bool isNewDateTime;
   void Set_new_date_time( const basic_string_view<unsigned char>& );
   void send_digit( ostream&theFile, const unsigned char&digit )const;

@@ -10,7 +10,6 @@ ASCII_date_time::ASCII_date_time():
 
 void ASCII_date_time::Set_new_date_time( const basic_string_view<unsigned char>&a )
 {
-  // year is voided in the computation but displayed
   year = a[ 0 ] + 17;
   month = a[ 1 ];
   day = a[ 2 ];
@@ -20,26 +19,27 @@ void ASCII_date_time::Set_new_date_time( const basic_string_view<unsigned char>&
 }
 bool ASCII_date_time::Check_new_date_time( const basic_string_view<unsigned char>&a )
 {
-  // year is voided
-  // the result is wrong, means there is a separator where it shouldn't, only in the night of the new year
   if ( a[ 5 ] != second || a[ 4 ] != minute )
 	{
 	  isNewDateTime = true;
 	}else{
 	if ( a[ 3 ] != 0 )
 	  {
-		// Still the same day
-		if ( a[ 3 ] == ( hour + 1 ) && a[ 2 ] == day  && a[ 1 ] == month )
+		// Still the same day, check for YYMMDD
+		if ( a[ 3 ] == ( hour + 1 ) && a[ 2 ] == day  && a[ 1 ] == month && ( a[ 0 ] + 17 ) == year )
 		  {
 			isNewDateTime = false;
 		  }else{
 		  isNewDateTime = true;
 		}
 	  }else{
+	  // Not the same day, check against the dates
 	  if( hour == 23 && (
+						 // Still the same month
 						 ( a[ 2 ] == ( day + 1 ) && a[ 1 ] == month ) ||
+						 // Not the same month, check for day=1 and next month
 						 ( a[ 2 ] == 1 && a[ 1 ] == ( month + 1 ))
-						 // Assume, we don't make any measurement the night 
+						 // Assume, we don't make any measurement the new year night 
 						 ))
 		{
 		  isNewDateTime = false;
@@ -82,11 +82,11 @@ ostream&operator<<(ostream&os,const ASCII_date_time&a)
 
 void ASCII_date_time::send_digit( ostream&theFile, const unsigned char&digit )const
 {
-  // It displays a number, using 2 bars of amplitude 10% per unit
+  // It displays a number, using 1 bar of amplitude 10% per unit
   // 
   // This function is supposed to be relevant for time-stamp only
   // It assumes, the numbers are never greater than 99, even 59
-  // $ff is treated to get the maximum for both bars
+  // $7f is treated to get the maximum for both bars
   array<char,12>buffer;
   fill( buffer.begin(), buffer.end(), 0x0 );
   // Convert the char into BCD
@@ -105,6 +105,8 @@ void ASCII_date_time::send_digit( ostream&theFile, const unsigned char&digit )co
 	theValR = 127;
 	theValL = 127;
   }
+  // The assume is the destination is a stereo, 8bits, signed file
+  // Then the spacers and the data is sent twice
   buffer[ 4 ] = theValL;
   buffer[ 5 ] = theValL;
   buffer[ 8 ] = theValR;

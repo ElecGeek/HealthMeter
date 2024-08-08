@@ -10,7 +10,7 @@ histogram_info::histogram_info(const bool&extra_thresholds)
 	}else{
 	  concaten_histo.reserve(histo_vals.size());
 	  copy( histo_vals.begin(),histo_vals.end(),back_inserter(concaten_histo));	
-  }
+  }  
   titles.reserve( 30 + 7 * concaten_histo.size());
   titles += " dur.   moy    min    max ";
   stringstream strstm;
@@ -18,8 +18,6 @@ histogram_info::histogram_info(const bool&extra_thresholds)
   strstm.setf( ios_base::fixed, ios_base::floatfield );
   for( unsigned short val : concaten_histo )
 	{
-
-
 	  strstm << "  <" << ((float)val) << "%";
 
 	  titles += strstm.str();
@@ -28,10 +26,10 @@ histogram_info::histogram_info(const bool&extra_thresholds)
 }
 
 
-histogram::histogram(const char&sample_rate, const histogram_info&histo_info):
+histogram::histogram(const char&sample_time, const histogram_info&histo_info):
   counter(0),
   min_val( numeric_limits< decltype( min_val )>::max()),moy_val(0),max_val(0),
-  sample_rate(sample_rate),
+  sample_time(sample_time),
   histo_info(histo_info) {
   for( unsigned short val : histo_info.concaten_histo )
 	the_histo.push_back( make_pair( 10 * val, 0 ));
@@ -49,8 +47,7 @@ histogram&histogram::operator<<=( unsigned short val){
   return*this;
 };
 ostream&operator<<(ostream&os, const histogram&histo){
-  // assume a sample rate of 1S
-  os << setfill(' ') << setw(2) << (histo.sample_rate * histo.counter ) / 60 << "min  ";
+  os << setfill(' ') << setw(2) << (histo.sample_time * histo.counter ) / 60 << "min  ";
   os.precision(1);
   os.setf( ios_base::fixed, ios_base::floatfield );
   os << round((float)histo.moy_val/(float)histo.counter) / 10.0 <<"%  ";
