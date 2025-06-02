@@ -95,6 +95,7 @@ void Process_input_file(const string_view&inputFileName,
   histogram_info histo_info(debug_extra_thresholds);
   histogram*histo_avg;
   signed short nbre_lines_per_date(-1);
+  unsigned char sample_time;
   for(;;)
 	{
 	  // Search for a bloc between 2 separators ($ff)
@@ -186,9 +187,12 @@ void Process_input_file(const string_view&inputFileName,
 			}
 		}
 		else*/
-	  
+	  if ( header[14] > 0 )
+		sample_time = header[14];
+	  else sample_time = numeric_limits< decltype( sample_time ) >::max();
+
 	  if ( nbre_lines_per_date < 0 )
-		  histo_avg = new histogram( header[14], histo_info );		
+		histo_avg = new histogram( sample_time, histo_info, false );
 	  nbre_lines_per_date += 1;
 	  if ( the_date_time.Check_new_date_time( header.substr( 7, 6 )) )
 		{
@@ -197,7 +201,7 @@ void Process_input_file(const string_view&inputFileName,
 			// BAD we assume the number of moinutes is between 100 and 999
 			cout << "     Average           " << *histo_avg << endl;
 		  delete histo_avg;
-		  histo_avg = new histogram( header[14], histo_info );
+		  histo_avg = new histogram( sample_time, histo_info, false );
 		  nbre_lines_per_date = 0;
 		}
  
@@ -205,7 +209,7 @@ void Process_input_file(const string_view&inputFileName,
 
 
    	  cout << the_date_time << "  ";
-	  
+
 	  if( outputFile.is_open() )
 		send_bloc( outputFile, slice_sv, histo_info, histo_avg );
 	  else
