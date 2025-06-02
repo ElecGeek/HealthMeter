@@ -18,7 +18,7 @@ using namespace std;
 // Processes one record
 // The data is normalised for audio editing software
 // The histogram is processed and sent to the standard output
-void send_bloc( ostream&theFile, basic_string_view<unsigned char> & bloc_sv, ASCII_date_time &the_date_time, const histogram_info&histo_info )
+void send_bloc( ostream&theFile, basic_string_view<unsigned char> & bloc_sv, const histogram_info&histo_info, histogram*const histo_avg )
 {
   //  cout << hex << (unsigned short)bloc_sv[0] << "\t" << hex << bloc_sv.length() << endl;
   /*  if ( 1==2 )
@@ -54,7 +54,10 @@ void send_bloc( ostream&theFile, basic_string_view<unsigned char> & bloc_sv, ASC
 			  cnv_val_8 = cnv_val_s;
 			  theFile.write( &cnv_val_8, 1 );
 			  if( odd_even == false )
-				(*histo)<<= s;
+				{
+				  (*histo)<<= s;
+				  (*histo_avg)<<= s;
+				}
 			  odd_even = !odd_even;
 			}
 		  cout << *histo;
@@ -90,6 +93,8 @@ void Process_input_file(const string_view&inputFileName,
   const basic_string<unsigned char> separ_str_1=separ_str.substr( 0, 1 );
   decltype( str_buff )::size_type begin_pos,end_pos= str_buff.find( separ_str );
   histogram_info histo_info(debug_extra_thresholds);
+  histogram*histo_avg;
+  signed short nbre_lines_per_date(-1);
   for(;;)
 	{
 	  // Search for a bloc between 2 separators ($ff)
@@ -181,15 +186,28 @@ void Process_input_file(const string_view&inputFileName,
 			}
 		}
 		else*/
-		cout << setfill(' ') << setw(2) << (unsigned short)header[ 0 ] << ":  ";
 	  
+	  if ( nbre_lines_per_date < 0 )
+		  histo_avg = new histogram( header[14], histo_info );		
+	  nbre_lines_per_date += 1;
 	  if ( the_date_time.Check_new_date_time( header.substr( 7, 6 )) )
-		the_date_time.Send_to_raw_file( outputFile );
-	  
-	  cout << the_date_time << "  ";
+		{
+		  the_date_time.Send_to_raw_file( outputFile );
+		  if ( nbre_lines_per_date > 1 )
+			// BAD we assume the number of moinutes is between 100 and 999
+			cout << "     Average           " << *histo_avg << endl;
+		  delete histo_avg;
+		  histo_avg = new histogram( header[14], histo_info );
+		  nbre_lines_per_date = 0;
+		}
+ 
+		cout << setfill(' ') << setw(2) << (unsigned short)header[ 0 ] << ":  ";
+
+
+   	  cout << the_date_time << "  ";
 	  
 	  if( outputFile.is_open() )
-		send_bloc( outputFile, slice_sv, the_date_time, histo_info );
+		send_bloc( outputFile, slice_sv, histo_info, histo_avg );
 	  else
 		cout<< "***** Some data is lost, as the output file is not opened *****" << endl;
 	}
