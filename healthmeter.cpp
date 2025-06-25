@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <fstream>
 #include <array>
@@ -192,7 +193,7 @@ void Process_input_file(const string_view&inputFileName,
 	  else sample_time = numeric_limits< decltype( sample_time ) >::max();
 
 	  if ( nbre_lines_per_date < 0 )
-		histo_avg = new histogram( sample_time, histo_info, false );
+		histo_avg = new histogram( sample_time, histo_info, optional<unsigned short>{91} );
 	  nbre_lines_per_date += 1;
 	  if ( the_date_time.Check_new_date_time( header.substr( 7, 6 )) )
 		{
@@ -201,7 +202,7 @@ void Process_input_file(const string_view&inputFileName,
 			// BAD we assume the number of moinutes is between 100 and 999
 			cout << "     Average           " << *histo_avg << endl;
 		  delete histo_avg;
-		  histo_avg = new histogram( sample_time, histo_info, false );
+		  histo_avg = new histogram( sample_time, histo_info, optional<unsigned short>{91} );
 		  nbre_lines_per_date = 0;
 		}
  

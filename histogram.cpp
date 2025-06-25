@@ -26,25 +26,25 @@ histogram_info::histogram_info(const bool&extra_thresholds)
 }
 
 
-histogram::histogram(const char&sample_time, const histogram_info&histo_info,const bool&start_from_first):
+histogram::histogram(const char&sample_time,
+					 const histogram_info&histo_info,
+					 const optional<const unsigned short>&delay_start):
   counter(0),
   min_val( numeric_limits< decltype( min_val )>::max()),moy_val(0),max_val(0),
   sample_time(sample_time),
-  histo_info(histo_info){
+  histo_info(histo_info),
+  delay_start(delay_start){
   for( unsigned short val : histo_info.concaten_histo )
 	the_histo.push_back( make_pair( 10 * val, 0 ));
-  if ( start_from_first )
-	start_count = 0;
-  else
-	// The start delay is hardcoded here.
-	// In the future, it may become a parameter
-	start_count = 30 * 60 / sample_time;
 }
 histogram&histogram::operator<<=( unsigned short val){
-  if ( start_count > 0 )
+  if ( delay_start )
 	{
-	  start_count -= 1;
-	  return*this;
+	  //	  cout<<val<<" ";
+	  if( *delay_start > val )
+		delay_start = nullopt;
+	  else
+		return*this;
 	} 
   for_each( the_histo.begin(), the_histo.end() , [&val]( auto & N){
 	  if ( N.first > ( val * 10 ) ) N.second++;} );

@@ -6,12 +6,13 @@
 #include <deque>
 #include <algorithm>
 #include <math.h>
+#include <optional>
 using namespace std;
 
 
 // Common class containing the thresholds for the analyse of all the input files
 class histogram_info {
-  const vector<unsigned short> histo_vals{ 91, 90, 85, 80 };
+  const vector<unsigned short> histo_vals{ 91, 90, 89, 80 };
   const vector<unsigned short> extra_histo{ 95, 101 };
   string titles;
 public:
@@ -38,10 +39,12 @@ class histogram {
   // Seconds for one sample
   unsigned char sample_time;
   const histogram_info&histo_info;
-  unsigned long start_count;
+  optional< const unsigned short>delay_start;
 public:
   histogram()=delete;
-  histogram(const char&,const histogram_info&histo_info,const bool&start_from_first=true);
+  histogram(const char&sample_time,
+			const histogram_info&histo_info,
+			const optional< const unsigned short>&delay_start=nullopt);
   histogram&operator<<=( unsigned short);
   friend ostream&operator<<(ostream&, const histogram&);
 };
