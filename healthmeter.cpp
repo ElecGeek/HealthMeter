@@ -209,7 +209,7 @@ void Process_input_file(const string_view&inputFileName,
 		cout << setfill(' ') << setw(2) << (unsigned short)header[ 0 ] << ":  ";
 
 
-   	  cout << the_date_time << "  ";
+   	  cout << the_date_time << " ";
 
 	  if( outputFile.is_open() )
 		send_bloc( outputFile, slice_sv, histo_info, histo_avg );

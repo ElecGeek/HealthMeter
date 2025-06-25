@@ -58,7 +58,7 @@ histogram&histogram::operator<<=( unsigned short val){
   return*this;
 };
 ostream&operator<<(ostream&os, const histogram&histo){
-  os << setfill(' ') << setw(2) << (histo.sample_time * histo.counter ) / 60 << "min  ";
+  os << setfill(' ') << setw(3) << (histo.sample_time * histo.counter ) / 60 << "min  ";
   os.precision(1);
   os.setf( ios_base::fixed, ios_base::floatfield );
   os << round((float)histo.moy_val/(float)histo.counter) / 10.0 <<"%  ";
