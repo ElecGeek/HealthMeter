@@ -12,7 +12,7 @@ using namespace std;
 
 // Common class containing the thresholds for the analyse of all the input files
 class histogram_info {
-  const vector<unsigned short> histo_vals{ 91, 90, 89, 80 };
+  const vector<unsigned short> histo_vals{ 91, 90, 89, 85 };
   const vector<unsigned short> extra_histo{ 95, 101 };
   string titles;
 public:
@@ -32,7 +32,9 @@ public:
 //  each threshold defined in the info class.
 class histogram {
   deque< pair< unsigned short, unsigned long > >the_histo;
-  unsigned long counter;
+  unsigned long samples_counter;
+  unsigned long threshold_counter;
+  bool threshold_high;
   unsigned long min_val;
   unsigned long max_val;
   unsigned long moy_val;

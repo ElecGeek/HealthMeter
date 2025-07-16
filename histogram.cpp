@@ -29,7 +29,8 @@ histogram_info::histogram_info(const bool&extra_thresholds)
 histogram::histogram(const char&sample_time,
 					 const histogram_info&histo_info,
 					 const optional<const unsigned short>&delay_start):
-  counter(0),
+  samples_counter(0),
+  threshold_counter(0), threshold_high( true ),
   min_val( numeric_limits< decltype( min_val )>::max()),moy_val(0),max_val(0),
   sample_time(sample_time),
   histo_info(histo_info),
@@ -46,6 +47,15 @@ histogram&histogram::operator<<=( unsigned short val){
 	  else
 		return*this;
 	} 
+  // threshold counting
+  if ( threshold_high && val < 90 )
+	{
+	  threshold_high = false;
+	  threshold_counter += 1;
+	}
+  else if ( threshold_high == false && val > 90 )
+	threshold_high = true;
+  // Now the histogram
   for_each( the_histo.begin(), the_histo.end() , [&val]( auto & N){
 	  if ( N.first > ( val * 10 ) ) N.second++;} );
   if ( ( val * 10 ) < min_val )
@@ -54,25 +64,27 @@ histogram&histogram::operator<<=( unsigned short val){
 	max_val = val * 10;
   moy_val += val * 10;
   //  cout << val << "  ";
-  counter++;
+  samples_counter++;
   return*this;
 };
 ostream&operator<<(ostream&os, const histogram&histo){
-  os << setfill(' ') << setw(3) << (histo.sample_time * histo.counter ) / 60 << "min  ";
+  os << setfill(' ') << setw(3) << (histo.sample_time * histo.samples_counter ) / 60 << "'";
+  os << setfill('0') << setw(2) << histo.sample_time * histo.samples_counter - 60 * (histo.sample_time * histo.samples_counter / 60 ) << "  ";
   os.precision(1);
   os.setf( ios_base::fixed, ios_base::floatfield );
-  os << round((float)histo.moy_val/(float)histo.counter) / 10.0 <<"%  ";
+  os << round((float)histo.moy_val/(float)histo.samples_counter) / 10.0 <<"%  ";
   os << ((float)histo.min_val)/10.0<<"%  ";
   os << ((float)histo.max_val)/10.0<<"%";
   float the_val;
   for_each( histo.the_histo.begin(), histo.the_histo.end(), [&](auto&iter)
 	{
-	  the_val = round( 1000.0 * (float)iter.second/(float)histo.counter ) / 10.0;
+	  the_val = round( 1000.0 * (float)iter.second/(float)histo.samples_counter ) / 10.0;
 	  os << "   ";
 	  if ( the_val != 0.0 )
 		os << setfill(' ') << setw(4) << the_val << "%";
 	  else
 		os << " /   ";
     } );
+  os << "  " << setfill(' ') << setw(3) << histo.threshold_counter;
   return os;
 }
