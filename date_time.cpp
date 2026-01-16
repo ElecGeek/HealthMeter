@@ -10,23 +10,23 @@ ASCII_date_time::ASCII_date_time():
 
 void ASCII_date_time::Set_new_date_time( const basic_string_view<unsigned char>&a )
 {
-  year = a[ 0 ] + 17;
-  month = a[ 1 ];
-  day = a[ 2 ];
-  hour = a[ 3 ];
-  minute = a[ 4 ];
-  second = a[ 5 ];
+  year = (unsigned char)((short)a[ 0 ] + 256 * (short)a[ 1 ] - 2000 );
+  month = a[ 2 ];
+  day = a[ 3 ];
+  hour = a[ 4 ];
+  minute = a[ 5 ];
+  second = a[ 6 ];
 }
 bool ASCII_date_time::Check_new_date_time( const basic_string_view<unsigned char>&a )
 {
-  if ( a[ 5 ] != second || a[ 4 ] != minute )
+  if ( a[ 6 ] != second || a[ 5 ] != minute )
 	{
 	  isNewDateTime = true;
 	}else{
-	if ( a[ 3 ] != 0 )
+	if ( a[ 4 ] != 0 )
 	  {
 		// Still the same day, check for YYMMDD
-		if ( a[ 3 ] == ( hour + 1 ) && a[ 2 ] == day  && a[ 1 ] == month && ( a[ 0 ] + 17 ) == year )
+		if ( a[ 4 ] == ( hour + 1 ) && a[ 3 ] == day  && a[ 2 ] == month && (unsigned char)((short)a[ 0 ] + 256 * (short)a[ 1 ] - 2000 ) == year )
 		  {
 			isNewDateTime = false;
 		  }else{
@@ -36,9 +36,9 @@ bool ASCII_date_time::Check_new_date_time( const basic_string_view<unsigned char
 	  // Not the same day, check against the dates
 	  if( hour == 23 && (
 						 // Still the same month
-						 ( a[ 2 ] == ( day + 1 ) && a[ 1 ] == month ) ||
+						 ( a[ 3 ] == ( day + 1 ) && a[ 2 ] == month ) ||
 						 // Not the same month, check for day=1 and next month
-						 ( a[ 2 ] == 1 && a[ 1 ] == ( month + 1 ))
+						 ( a[ 3 ] == 1 && a[ 2 ] == ( month + 1 ))
 						 // Assume, we don't make any measurement the new year night 
 						 ))
 		{

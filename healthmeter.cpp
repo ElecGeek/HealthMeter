@@ -195,7 +195,7 @@ void Process_input_file(const string_view&inputFileName,
 	  if ( nbre_lines_per_date < 0 )
 		histo_avg = new histogram( sample_time, histo_info, optional<unsigned short>{91} );
 	  nbre_lines_per_date += 1;
-	  if ( the_date_time.Check_new_date_time( header.substr( 7, 6 )) )
+	  if ( the_date_time.Check_new_date_time( header.substr( 6, 7 )) )
 		{
 		  the_date_time.Send_to_raw_file( outputFile );
 		  if ( nbre_lines_per_date > 1 )

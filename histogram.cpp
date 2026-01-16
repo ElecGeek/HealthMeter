@@ -85,6 +85,6 @@ ostream&operator<<(ostream&os, const histogram&histo){
 	  else
 		os << " /   ";
     } );
-  os << "  " << setfill(' ') << setw(3) << histo.threshold_counter;
+  os << "  " << setfill(' ') << setw(4) << (float)(3600*histo.sample_time*histo.threshold_counter)/(float)histo.samples_counter;
   return os;
 }
