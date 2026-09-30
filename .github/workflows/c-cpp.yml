@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: setup build folders
         run: |
           mkdir build
@@ -28,7 +28,7 @@ jobs:
           cd build/Ubuntu
           tar -cf The_objects_files.tar *.o --remove-files
       - name: return workflow as artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: healthmeter_build_ubuntu
           path: build
@@ -37,7 +37,7 @@ jobs:
     runs-on: macOS-latest
     name: Mac OS X build
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: setup build folders
         run: |
           mkdir build
@@ -51,7 +51,7 @@ jobs:
           tar -cf The_objects_files.tar *.o
           rm -f *.o
       - name: return workflow as artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: healthmeter_build_macos_x
           path: build
@@ -60,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Windows build
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Windows env
         run: |
           sudo apt-get install mingw-w64
@@ -76,7 +76,7 @@ jobs:
           cd build/Windows
           tar -cf The_objects_files.tar *.o --remove-files
       - name: return workflow as artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: healthmeter_build_windows
           path: build
@@ -87,7 +87,7 @@ jobs:
     needs: [ windows-build, ubuntu-build, macos-x-build ] 
     steps:
       - name: Merge artifacts
-        uses: actions/upload-artifact/merge@v4
+        uses: actions/upload-artifact/merge@v6
         with:
           delete-merged: true
           name: healthmeter_builds
